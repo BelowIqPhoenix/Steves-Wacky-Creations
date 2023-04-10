@@ -1,0 +1,12 @@
+{
+  "compatibilityLevel": "JAVA_8",
+  "package": "wacky.steve.mixins",
+  "refmap": "mixins.wacky.refmap.json",
+  "mixins": [
+    "MixinGuiEditSign"
+  ],
+  "verbose": true,
+  "client": [
+    "MixinGuiMainMenu"
+  ]
+}
