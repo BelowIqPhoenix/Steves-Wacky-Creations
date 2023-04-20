@@ -9,7 +9,7 @@ public class onRNG {
 
     @SubscribeEvent
     public void onDrop(ClientChatReceivedEvent event) {
-        if (event.message.getFormattedText().contains("CRAZY RARE DROP!") && Config.onRNG) {
+        if (event.message.getFormattedText().contains("CRAZY RARE DROP!") && Config.onRNG()) {
             ChatUtils.command("/pc JÆVLA SJELDENT DROPP! ingen bryr seg!");
         }
     }

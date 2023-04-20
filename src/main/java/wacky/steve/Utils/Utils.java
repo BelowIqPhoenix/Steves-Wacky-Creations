@@ -1,31 +1,21 @@
 package wacky.steve.Utils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import wacky.steve.Main;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import wacky.steve.Config.Config;
 
 public class Utils {
 
-    public static boolean isWhitelisted(String playerName) {
-        boolean whitelisted = false;
+    public static boolean isWhitelisted(String player) {
         try {
-            String str = new String(Files.readAllBytes(Paths.get(Main.modDir.toString(), "wackywhitelist.json")));
-            JSONObject obj = new JSONObject(str);
-
-            JSONArray whitelist = obj.getJSONArray("players");
-
-            for (int i = 0; i < whitelist.length(); i++) {
-                if (whitelist.getString(i).equalsIgnoreCase(playerName)) {
-                    whitelisted = true;
-                    break;
-                }
+            JsonNode config = Config.readConfig();
+            ArrayNode players = (ArrayNode) config.get("players");
+            for (int i = 0; i < players.size(); i++) {
+                if (players.get(i).asText().equals(player)) return true;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  whitelisted;
+        return false;
     }
 }

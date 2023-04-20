@@ -12,7 +12,7 @@ import wacky.steve.Utils.Utils;
 
 public class CommandBase {
 
-    public static final String PREFIX = "./$";
+    public static final String PREFIX = ".";
 
     @SubscribeEvent
     public void onchat(ClientChatReceivedEvent event) {

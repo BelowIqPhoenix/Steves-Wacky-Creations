@@ -1,16 +1,14 @@
 package wacky.steve.Commands.Whitelist;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import wacky.steve.Config.Config;
 import wacky.steve.Main;
 import wacky.steve.Utils.ChatUtils;
+import wacky.steve.Utils.Utils;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,33 +42,34 @@ public class Whitelist extends CommandBase {
             String playername = args[1];
 
             if (args[0].equals("add")) {
-                String str = new String(Files.readAllBytes(Paths.get(Main.modDir.toString(), "wackywhitelist.json")));
-                JSONObject obj = new JSONObject(str);
 
-                JSONArray whitelist = obj.getJSONArray("players");
-                whitelist.put(playername);
+                if (Utils.isWhitelisted(playername)) {
+                    ChatUtils.log(playername + " is already whitelisted");
+                    return;
+                }
 
-                FileWriter writer = new FileWriter(Main.whitelist);
-                writer.write(obj.toString());
-                writer.close();
+                JsonNode config = Config.readConfig();
+                ArrayNode players = (ArrayNode) config.get("players");
+                players.add(playername);
+                Main.om.writeValue(Main.whitelist, config);
 
                 ChatUtils.log(playername + " is now whitelisted");
             } else if (args[0].equals("remove")) {
-                String str = new String(Files.readAllBytes(Paths.get(Main.modDir.toString(), "wackywhitelist.json")));
-                JSONObject obj = new JSONObject(str);
 
-                JSONArray whitelist = obj.getJSONArray("players");
+                if (!Utils.isWhitelisted(playername)) {
+                    ChatUtils.log(playername + " is not whitelisted");
+                    return;
+                }
 
-                for (int i = 0; i < whitelist.length(); i++) {
-                    if (whitelist.getString(i).equals(playername)) {
-                        whitelist.remove(i);
+                JsonNode config = Config.readConfig();
+                ArrayNode players = (ArrayNode) config.get("players");
+                for (int i = 0; i < players.size(); i++) {
+                    if (players.get(i).asText().equals(playername)) {
+                        players.remove(i);
                         break;
                     }
                 }
-
-                FileWriter writer = new FileWriter(Main.whitelist);
-                writer.write(obj.toString());
-                writer.close();
+                Main.om.writeValue(Main.whitelist, config);
 
                 ChatUtils.log(playername + " has been removed from the whitelist");
             } else {

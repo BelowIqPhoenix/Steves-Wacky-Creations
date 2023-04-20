@@ -1,5 +1,6 @@
 package wacky.steve;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -8,15 +9,12 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import wacky.steve.Commands.CommandBase;
 import wacky.steve.Commands.Meme.onRNG;
 import wacky.steve.Commands.Whitelist.Whitelist;
 import wacky.steve.Config.Config;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 @Mod(name = Main.MODNAME, modid = Main.MODID, version = Main.VERSION, acceptedMinecraftVersions = "[1.8.9]", clientSideOnly = true)
@@ -26,10 +24,10 @@ public class Main {
     public static final String MODID = "steveswackycreations";
     public static final String VERSION = "1.0";
     public static final Minecraft mc = Minecraft.getMinecraft();
+    public static final ObjectMapper om = new ObjectMapper();
 
     public static File modDir = new File(new File(mc.mcDataDir, "config"), "steveswackycreations");
     public static File whitelist = new File(modDir + "/" + "wackywhitelist.json");
-    public static Config config = new Config();
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) throws IOException {
@@ -37,18 +35,12 @@ public class Main {
 
         if (!whitelist.exists()) {
             whitelist.createNewFile();
-            JSONObject obj = new JSONObject();
-            JSONArray whitelist = new JSONArray();
-            obj.put("players", whitelist);
-            FileWriter writer = new FileWriter(Main.whitelist);
-            writer.write(obj.toString());
-            writer.close();
+            Config.init();
         }
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        config.preload();
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CommandBase());
         MinecraftForge.EVENT_BUS.register(new onRNG());

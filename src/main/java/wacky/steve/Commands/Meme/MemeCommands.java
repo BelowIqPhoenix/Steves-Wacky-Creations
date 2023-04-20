@@ -1,10 +1,12 @@
 package wacky.steve.Commands.Meme;
 
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import wacky.steve.Config.Config;
+import wacky.steve.Main;
 import wacky.steve.Utils.ChatUtils;
 import wacky.steve.Utils.TimeUtils;
+
+import java.io.IOException;
 
 public class MemeCommands {
 
@@ -27,8 +29,15 @@ public class MemeCommands {
     }
 
     public static void onRNG() {
-        Config.onRNG = !Config.onRNG;
-        ChatUtils.log("onRNG has been set to " + Config.onRNG);
+        try {
+            ObjectNode object = (ObjectNode) Config.readConfig();
+            object.put("onRNG", !Config.onRNG());
+            Main.om.writeValue(Main.whitelist, object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ChatUtils.log("onRNG has been set to " + Config.onRNG());
     }
 
     public static void eightBall() {

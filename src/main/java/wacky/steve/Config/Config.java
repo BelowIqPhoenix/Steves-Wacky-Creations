@@ -1,17 +1,37 @@
 package wacky.steve.Config;
 
-import gg.essential.vigilance.Vigilant;
-import gg.essential.vigilance.data.JVMAnnotationPropertyCollector;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import wacky.steve.Main;
 
-import java.io.File;
+public class Config {
 
-public class Config extends Vigilant {
-    public static final File CONFIG_FILE = new File("config/steveswackycreations/wackyconfig.toml");
+    public static void init() {
+        try {
+            ObjectNode object = Main.om.createObjectNode();
+            object.put("onRNG", true);
+            object.putArray("players");
+            Main.om.writeValue(Main.whitelist, object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    public static boolean onRNG = true;
+    public static JsonNode readConfig() {
+        try {
+            return Main.om.readTree(Main.whitelist);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-    public Config() {
-        super(CONFIG_FILE, "Steve's Wacky Creations Config", new JVMAnnotationPropertyCollector());
-        initialize();
+    public static boolean onRNG() {
+        try {
+            return Config.readConfig().get("onRNG").asBoolean();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
